@@ -7,8 +7,8 @@
     </head>
     <body>
         <div id="vue-wordpress-app">
-            <h1>Vue.wordpress</h1>
-            <p>A Wordpress starter theme with a Vue.js frontend.</p>
+            <h1><?php echo RADL::get('state.site')['name'];?></h1>
+            <p><?php echo RADL::get('state.site')['description'];?></p>
         </div>
         <?php wp_footer();?>
     </body>

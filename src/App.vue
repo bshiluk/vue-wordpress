@@ -1,6 +1,6 @@
 <template>
   <div id="vue-wordpress-app">
-    <h1></h1>
+    <h1>{{ name }}</h1>
     <p>{{ description }}</p>
   </div>
 </template>
@@ -9,8 +9,8 @@
 export default {
   data() {
     return {
-      title: 'Vue.wordpress',
-      description: 'A Wordpress starter theme with a Vue.js frontend.'
+      name: this.$store.state.site.name,
+      description: this.$store.state.site.description
     }
   },
   mounted() {
