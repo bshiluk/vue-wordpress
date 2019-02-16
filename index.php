@@ -7,8 +7,8 @@
     </head>
     <body>
         <div id="vue-wordpress-app">
-            <h1>Hybrid Vue WP Starter</h1>
-            <p>Create a Wordpress theme with a Vue.js frontend.</p>
+            <h1>Vue.wordpress</h1>
+            <p>A Wordpress starter theme with a Vue.js frontend.</p>
         </div>
         <?php wp_footer();?>
     </body>

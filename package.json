@@ -1,5 +1,5 @@
 {
-  "name": "hybrid-vue-wp-starter",
+  "name": "vue-wordpress",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --env=dev",

@@ -9,8 +9,8 @@
 export default {
   data() {
     return {
-      title: 'Hybrid Vue WP Starter',
-      description: 'Create a Wordpress theme with a Vue.js frontend.'
+      title: 'Vue.wordpress',
+      description: 'A Wordpress starter theme with a Vue.js frontend.'
     }
   },
   mounted() {

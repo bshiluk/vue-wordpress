@@ -8,7 +8,7 @@ module.exports = {
   mode: 'production',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'hybrid-vue-wp.js'
+    filename: 'vue-wordpress.js'
   },
   module: {
     rules: [
@@ -33,7 +33,7 @@ module.exports = {
   plugins: [
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
-      filename: 'hybrid-vue-wp.css'
+      filename: 'vue-wordpress.css'
     })
   ],
   resolve: {
