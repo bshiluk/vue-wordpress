@@ -56,7 +56,9 @@ if ( !class_exists( 'RADL' ) ) {
  */
 
 new RADL( '__VUE_WORDPRESS__', 'vue_wordpress.js', array(
+    'routing' => RADL::callback( 'vue_wordpress_routing' ),
     'state' => array(
+        'menus' => RADL::callback( 'vue_wordpress_menus' ),
         'site' => RADL::callback( 'vue_wordpress_site' ),
     ),
 ) );
@@ -65,6 +67,68 @@ new RADL( '__VUE_WORDPRESS__', 'vue_wordpress.js', array(
  * REST API Data Localizer callbacks
  */
 
+function vue_wordpress_routing()
+{
+    $routing = array(
+        'category_base' => get_option( 'category_base' ),
+        'page_on_front' => null,
+        'page_for_posts' => null,
+        'permalink_structure' => get_option( 'permalink_structure' ),
+        'show_on_front' => get_option( 'show_on_front' ),
+        'tag_base' => get_option( 'tag_base' ),
+        'url' => get_bloginfo( 'url' ),
+    );
+
+    if ( $routing['show_on_front'] === 'page' ) {
+        $routing['page_on_front'] = array( 'id' => get_option( 'page_on_front' ) );
+
+        if ( $routing['page_on_front']['id'] ) {
+            $post = get_post( $routing['page_on_front']['id'] );
+            $routing['page_on_front']['slug'] = $post->post_name;
+        }
+
+        $routing['page_for_posts'] = array( 'id' => get_option( 'page_for_posts' ) );
+
+        if ( $routing['page_for_posts']['id'] ) {
+            $post = get_post( $routing['page_for_posts']['id'] );
+            $routing['page_for_posts']['slug'] = $post->post_name;
+        }
+
+    }
+
+    return $routing;
+}
+
+function vue_wordpress_menus()
+{
+    $menus = array();
+    // $locations is an array where ([NAME] = MENU_ID);
+    $locations = get_nav_menu_locations();
+
+    foreach ( array_keys( $locations ) as $name ) {
+        $id = $locations[$name];
+        $menu = array();
+        $menu_items = wp_get_nav_menu_items( $id );
+
+        foreach ( $menu_items as $i ) {
+
+            array_push( $menu, array(
+                'id'      => $i->ID,
+                'parent'  => $i->menu_item_parent,
+                'target'  => $i->target,
+                'content' => $i->title,
+                'title'   => $i->attr_title,
+                'url'     => $i->url,
+            ) );
+
+        }
+
+        $menus[$name] = $menu;
+    }
+
+    return $menus;
+}
+
 function vue_wordpress_site()
 {
     return array(
@@ -72,6 +136,7 @@ function vue_wordpress_site()
         'logo' => get_theme_mod( 'custom_logo' ),
         'name' => get_bloginfo( 'name' ),
         'posts_per_page' => get_option( 'posts_per_page' ),
+        'url' => get_bloginfo( 'url' )
     );
 
 }
