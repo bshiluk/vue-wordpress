@@ -8,6 +8,7 @@
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.2.2",
+    "axios": "^0.18.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.5",
     "babel-preset-env": "^1.7.0",
@@ -17,6 +18,7 @@
     "mini-css-extract-plugin": "^0.5.0",
     "vue": "^2.6.6",
     "vue-loader": "^15.6.2",
+    "vue-router": "^3.0.2",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.6",
     "vuex": "^3.1.0",
