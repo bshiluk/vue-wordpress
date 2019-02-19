@@ -1,13 +1,19 @@
 <template>
   <main>
-    <h1>404</h1>
+    <h1>404 - Page Not Found</h1>
+    <p>{{ message }}</p>
+    <button @click="$router.go(-1)">Go Back</button>
+    <button @click="$router.replace('/')">Go Home</button>
   </main>
 </template>
 
 <script>
 export default {
+  name: '404',
   data() {
-    return {}
+    return {
+      message: 'Apparently nothing exists at this location.'
+    }
   }
 }
 </script>
