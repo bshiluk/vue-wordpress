@@ -15,7 +15,7 @@ export default {
   },
   requestedItems: (state, getters) => ({ type, params }) => {
     let request = getters.request({ type, params })
-    return request ? request.data.map(id => state[type][id]) : Array.from({ length: parseInt(state.site.posts_per_page) }).map((v,i) => ({ id: `loading${i}` }))
+    return request ? request.data.map(id => state[type][id]) : []
   },
   singleBySlug: state => ({ type, slug }) => {
     for (let id in state[type]) {
