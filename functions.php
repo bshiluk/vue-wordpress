@@ -58,7 +58,12 @@ if ( !class_exists( 'RADL' ) ) {
 new RADL( '__VUE_WORDPRESS__', 'vue_wordpress.js', array(
     'routing' => RADL::callback( 'vue_wordpress_routing' ),
     'state' => array(
+        'categories' => RADL::endpoint( 'categories'),
         'menus' => RADL::callback( 'vue_wordpress_menus' ),
+        'pages' => RADL::endpoint( 'pages' ),
+        'posts' => RADL::endpoint( 'posts' ),
+        'tags' => RADL::endpoint( 'tags' ),
+        'users' => RADL::endpoint( 'users' ),
         'site' => RADL::callback( 'vue_wordpress_site' ),
     ),
 ) );
