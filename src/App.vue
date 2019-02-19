@@ -3,15 +3,17 @@
     id="vue-wordpress-app"
     @click="handleClicks"
   >
-    <h1>{{ site.name }}</h1>
-    <p>{{ site.description }}</p>
-    <main-menu />
+    <header class="container">
+      <h1>{{ site.name }}</h1>
+      <p>{{ site.description }}</p>
+      <main-menu />
+    </header>
     <transition
       name="fade"
       mode="out-in"
       @after-leave="updateScroll"
     >
-      <router-view />
+      <router-view class="container" />
     </transition>
   </div>
 </template>
