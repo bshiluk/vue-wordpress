@@ -9,10 +9,6 @@ function categorySlugFromParams({ cat1, cat2, cat3 }) {
   }
 }
 
-function pageFromParams({ page }) {
-  return page ? parseInt(page.replace('page/', '')) : 1
-}
-
 function pageFromPath(path) {
   let p = path.split('/').filter(i => i)
   if (p.length > 1 && p[p.length - 2] === 'page') {
@@ -24,6 +20,5 @@ function pageFromPath(path) {
 
 export {
   categorySlugFromParams,
-  pageFromParams,
   pageFromPath
 }

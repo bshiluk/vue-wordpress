@@ -16,25 +16,25 @@ import {
 } from './utils'
 
 
-const { show_on_front, page_for_posts } = __VUE_WORDPRESS__.routing
+const { show_on_front, page_for_posts, page_on_front } = __VUE_WORDPRESS__.routing
 
-const postsPageRoute = page_for_posts && page_for_posts.slug ? {
-  path: paths.postsPage(page_for_posts.slug),
+const postsPageRoute = show_on_front === 'page' && page_for_posts ? {
+  path: paths.postsPage(page_for_posts),
   component: Home,
   name: 'Posts',
-  props: route => ({ page: pageFromParams(route.params) })
+  props: route => ({ page: pageFromPath(route.path) })
 } : null
 
-const rootRoute = show_on_front === 'page' && postsPageRoute ? {
+const rootRoute = show_on_front === 'page' && page_on_front ? {
   path: '/',
   component: Page,
   name: 'Home',
-  props: () => ({ slug: page_for_posts.slug }),
+  props: () => ({ slug: page_on_front }),
 } : {
-  path: paths.rootAsPosts,
+  path: paths.postsPage(),
   component: Home,
   name: 'Home',
-  props: route => ({ page: pageFromParams(route.params) }),
+  props: route => ({ page: pageFromPath(route.path) }),
 }
 
 export default [
@@ -55,7 +55,7 @@ export default [
     path: paths.authorArchive,
     component: AuthorArchive,
     name: 'AuthorArchive',
-    props: route => (Object.assign(route.params, { page: pageFromParams(route.params) }))
+    props: route => (Object.assign(route.params, { page: pageFromPath(route.path) }))
   },
   {
     path: paths.categoryArchive,
@@ -67,13 +67,13 @@ export default [
     path: paths.tagArchive,
     component: TaxonomyArchive,
     name: 'TagArchive',
-    props: route => (Object.assign(route.params, { type: 'tags' }, { page: pageFromParams(route.params) }))
+    props: route => (Object.assign(route.params, { type: 'tags' }, { page: pageFromPath(route.path) }))
   },
   {
     path: paths.single,
     component: Single,
     name: 'Single',
-    props: route => ({ slug: route.params.slug })
+    props: route => ({ slug: route.params.slug }),
   },
   /**
    * This also functions as a catch all redirecting
