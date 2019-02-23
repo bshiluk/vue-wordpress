@@ -1,5 +1,5 @@
 <template>
-  <nav class="main-menu">
+  <nav>
     <a
       v-for="item in menu"
       :key="item.id"
@@ -13,12 +13,19 @@
 
 <script>
 export default {
+  name: 'NavMenu',
+  props: {
+    name: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {}
   },
   computed: {
     menu() {
-      return this.$store.getters.menu({ name: 'main' })
+      return this.$store.getters.menu({ name: this.name })
     }
   }
 }
