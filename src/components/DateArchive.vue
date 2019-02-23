@@ -4,26 +4,30 @@
       <h1>{{ title }}</h1>
     </header>
     <section v-if="posts">
-      <article
+      <post-item
         v-for="post in posts"
         :key="post.id"
-      >
-        <h2>
-          <a 
-            :href="post.link"
-            :title="post.title.rendered"
-            v-html="post.title.rendered"
-          ></a>
-        </h2>
-        <div v-html="post.excerpt.rendered"></div>
-      </article>
+        :post="post"
+      />
+      <pagination
+        v-if="totalPages > 1"
+        :total="totalPages"
+        :current="page"
+      />
     </section>
   </main>
 </template>
 
 <script>
+import PostItem from '@/components/template-parts/PostItem'
+import Pagination from '@/components/template-parts/Pagination'
+
 export default {
   name: 'DateArchive',
+  components: {
+    PostItem,
+    Pagination
+  },
   props: {
     page: {
       type: Number,
@@ -74,7 +78,8 @@ export default {
           page: this.page,
           after: this.after,
           before: this.before
-        }
+        },
+        showLoading: true
       }
     },
     title() {
@@ -92,16 +97,6 @@ export default {
     },
     setTotalPages() {
       this.totalPages = this.$store.getters.totalPages(this.request)
-    }
-  },
-  watch: {
-    '$route.params': function(a, b) {
-      if (a.year !== b.year || a.month !== b.month || a.day !== b.day) {
-        this.totalPages = 0
-        this.getArchive().then(() => this.setTotalPages())
-      } else if (a.page !== b.page){
-        this.getArchive()
-      }
     }
   },
   created() {

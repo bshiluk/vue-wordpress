@@ -8,6 +8,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'Page',
   props: {
@@ -24,18 +25,19 @@ export default {
       return this.$store.getters.singleBySlug(this.request)
     },
     request() {
-      return { type: 'pages', slug: this.slug }
+      return { type: 'pages', slug: this.slug, showLoading: true }
     }
   },
   methods: {
     getPage () {
       this.$store.dispatch('getSingleBySlug', this.request).then(() => {
-        if (!this.page) this.$router.replace('/404')
+        if (this.page) {
+          this.$store.dispatch('updateDocTitle', { parts: [ this.page.title.rendered, this.$store.state.site.name] })
+        } else {
+          this.$router.replace('/404')
+        }
       })
     }
-  },
-  watch: {
-    '$route': 'getPage'
   },
   created () {
     this.getPage()

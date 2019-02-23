@@ -4,26 +4,30 @@
       <h1>{{ title }}</h1>
     </header>
     <section v-if="posts">
-      <article
+      <post-item
         v-for="post in posts"
         :key="post.id"
-      >
-        <h2>
-          <a 
-            :href="post.link"
-            :title="post.title.rendered"
-            v-html="post.title.rendered"
-          ></a>
-        </h2>
-        <div v-html="post.excerpt.rendered"></div>
-      </article>
+        :post="post"
+      />
+      <pagination
+        v-if="totalPages > 1"
+        :total="totalPages"
+        :current="page"
+      />
     </section>
   </main>
 </template>
 
 <script>
+import PostItem from '@/components/template-parts/PostItem'
+import Pagination from '@/components/template-parts/Pagination'
+
 export default {
   name: 'TaxonomyArchive',
+  components: {
+    PostItem,
+    Pagination
+  },
   props: {
     type: {
       type: String,
@@ -58,34 +62,26 @@ export default {
     },
     postsRequest() {
       if (this.taxonomy) {
-        let request = { type: 'posts', params: { per_page: this.per_page, page: this.page } }
+        let request = { type: 'posts', params: { per_page: this.per_page, page: this.page }, showLoading: true }
         request.params[this.type] = this.taxonomy.id
         return request
       }
     },
     title() {
-      return `Archive for ${this.taxonomy ? this.taxonomy.name : '__________'}`
+      return `Archive for ${this.taxonomy ? this.taxonomy.name : ''}`
     }
   },
   methods: {
     getTaxonomy() {
-      return this.$store.dispatch('getSingleBySlug', this.taxonomyRequest)
+      return this.$store.dispatch('getSingleBySlug', this.taxonomyRequest).then(() => {
+        this.$store.dispatch('updateDocTitle', { parts: [ this.taxonomy.name, this.$store.state.site.name ] })
+      })
     },
     getPosts() {
       return this.$store.dispatch('getItems', this.postsRequest)
     },
     setTotalPages() {
       this.totalPages = this.$store.getters.totalPages(this.postsRequest)
-    }
-  },
-  watch: {
-    '$route': function(a, b) {
-      if (a.name !== b.name || a.params.slug !== b.params.slug) {
-        this.totalPages = 0
-        this.getTaxonomy().then(() => this.getPosts()).then(() => this.setTotalPages())
-      } else if (a.params.page !== b.params.page){
-        this.getPosts()
-      }
     }
   },
   created() {

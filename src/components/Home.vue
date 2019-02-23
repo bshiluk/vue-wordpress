@@ -1,26 +1,30 @@
 <template>
   <main>
-    <section v-if="posts">
-      <article
+    <section v-if="posts.length">
+      <post-item
         v-for="post in posts"
         :key="post.id"
-      >
-        <h2>
-          <a 
-            :href="post.link"
-            :title="post.title.rendered"
-            v-html="post.title.rendered"
-          ></a>
-        </h2>
-        <div v-html="post.excerpt.rendered"></div>
-      </article>
+        :post="post"
+      />
+      <pagination
+        v-if="totalPages > 1"
+        :total="totalPages"
+        :current="page"
+      />
     </section>
   </main>
 </template>
 
 <script>
+import PostItem from '@/components/template-parts/PostItem'
+import Pagination from '@/components/template-parts/Pagination'
+
 export default {
   name: 'Home',
+  components: {
+    PostItem,
+    Pagination
+  },
   props: {
     page: {
       type: Number,
@@ -35,7 +39,7 @@ export default {
   },
   computed: {
     request() {
-      return { type: 'posts', params: { per_page: this.per_page, page: this.page } }
+      return { type: 'posts', params: { per_page: this.per_page, page: this.page }, showLoading: true }
     },
     posts() {
       return this.$store.getters.requestedItems(this.request)
@@ -48,9 +52,6 @@ export default {
     setTotalPages() {
       this.totalPages = this.$store.getters.totalPages(this.request)
     }
-  },
-  watch: {
-    '$route.params.page': 'getPosts'
   },
   created() {
     this.getPosts().then(() => this.setTotalPages())

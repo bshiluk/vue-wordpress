@@ -9,11 +9,13 @@
 
 <script>
 export default {
-  name: '404',
   data() {
     return {
       message: 'Apparently nothing exists at this location.'
     }
+  },
+  created() {
+    this.$store.dispatch('updateDocTitle', { parts: [ 'Page not found', this.$store.state.site.name ] })
   }
 }
 </script>
