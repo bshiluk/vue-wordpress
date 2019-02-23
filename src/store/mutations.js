@@ -8,5 +8,11 @@ export default {
   },
   ADD_REQUEST(state, { type, request }) {
     state[type].requests.push(request)
+  },
+  SET_LOADING(state, loading) {
+    state.site.loading = loading
+  },
+  SET_DOC_TITLE(state, title) {
+    state.site.docTitle = title
   }
 }
