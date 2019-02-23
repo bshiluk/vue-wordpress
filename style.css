@@ -26,13 +26,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+main {
+  min-height: 100vh;
+  overflow: hidden;
+}
+
 .container {
   width: 100%;
-  max-width: 160rem;
+  max-width: 120rem;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1.6rem;
   padding-right: 1.6rem;
   box-sizing: border-box;
-  overflow: hidden;
+}
+
+h1 {
+  font-size: 3.2rem;
+}
+
+h2 {
+  font-size: 2.4rem;
+}
+
+h3 {
+  font-size: 2rem;
 }
