@@ -20,8 +20,7 @@
       <span><?php echo RADL::get('state.site')['name']; ?></span>
     </div>
     <nav class="main-menu">
-      <?php echo '<script>console.log('.json_encode(RADL::get('state.menus')).')</script>'; ?>
-      <?php foreach ( RADL::get('state.menus')['main'] as $item ): ?>
+    <?php foreach ( RADL::get('state.menus')['main'] as $item ): ?>
       <a href="<?php echo $item['link']; ?>" target="<?php echo $item['target']; ?>"
         title="<?php echo $item['title']; ?>"><?php echo $item['content']; ?></a>
       <?php endforeach;?>
