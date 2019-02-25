@@ -11,7 +11,6 @@ import paths from './paths'
 // Route composition utilities
 import {
   categorySlugFromParams,
-  pageFromParams,
   pageFromPath
 } from './utils'
 

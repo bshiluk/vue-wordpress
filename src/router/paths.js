@@ -9,9 +9,9 @@ const tagToParam = {
   year: ':year(\\d{4})',
   monthnum: ':month(\\d{2})',
   day: ':day(\\d{2})',
-  hour: ':hour(\\d{2}',
+  hour: ':hour(\\d{2})',
   minute: ':min(\\d{2})',
-  second: ':sec(\\d{2}'
+  second: ':sec(\\d{2})'
 }
 
 // If no category/tag base set WP uses base of singlePost permalink structure excluding tags
