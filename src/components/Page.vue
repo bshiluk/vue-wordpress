@@ -18,26 +18,29 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      request: {
+        type: 'pages',
+        slug: this.slug,
+        showLoading: true 
+      }
+    }
   },
   computed: {
     page() {
       return this.$store.getters.singleBySlug(this.request)
-    },
-    request() {
-      return { type: 'pages', slug: this.slug, showLoading: true }
     }
   },
   methods: {
     getPage () {
-      this.$store.dispatch('getSingleBySlug', this.request).then(() => {
-        if (this.page) {
-          this.$store.dispatch('updateDocTitle', { parts: [ this.page.title.rendered, this.$store.state.site.name] })
-        } else {
-          this.$router.replace('/404')
-        }
-      })
-    }
+        this.$store.dispatch('getSingleBySlug', this.request).then(() => {
+          if (this.page) {
+            this.$store.dispatch('updateDocTitle', { parts: [ this.page.title.rendered, this.$store.state.site.name] })
+          } else {
+            this.$router.replace('/404')
+          }
+        })
+      }
   },
   created () {
     this.getPage()

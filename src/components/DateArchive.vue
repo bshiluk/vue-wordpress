@@ -48,8 +48,17 @@ export default {
   },
   data () {
     return {
-      per_page: this.$store.state.site.posts_per_page,
-      totalPages: 0
+      totalPages: 0,
+      request: {
+        type: 'posts',
+        params: {
+          per_page: this.$store.state.site.posts_per_page,
+          page: this.page,
+          after: this.after,
+          before: this.before
+        },
+        showLoading: true
+      }
     }
   },
   computed: {
@@ -70,18 +79,6 @@ export default {
     posts() {
       return this.$store.getters.requestedItems(this.request)
     },
-    request() {
-      return {
-        type: 'posts',
-        params: {
-          per_page: this.per_page,
-          page: this.page,
-          after: this.after,
-          before: this.before
-        },
-        showLoading: true
-      }
-    },
     title() {
       let options = { year: 'numeric' }
       if (this.month){
@@ -92,15 +89,31 @@ export default {
     }
   },
   methods: {
-    getArchive() {
+    getPosts() {
       return this.$store.dispatch('getItems', this.request)
+    },
+    setAfterParam() {
+      this.request.params.after = `${this.year}${this.month ? '-' + this.month : '-01'}${this.day ? '-' + this.day : '-01'}T00:00:00.000Z`
+    },
+    setBeforeParam() {
+      let before = new Date(this.request.params.after)
+      if (this.day) {
+        before.setUTCDate(before.getUTCDate() + 1)
+      } else if (this.month) {
+        before.setUTCMonth(before.getUTCMonth() + 1)
+      } else {
+        before.setUTCFullYear(before.getUTCFullYear() + 1)
+      }
+      this.request.params.before = before.toISOString()
     },
     setTotalPages() {
       this.totalPages = this.$store.getters.totalPages(this.request)
     }
   },
   created() {
-    this.getArchive().then(() => this.setTotalPages())
+    this.setAfterParam()
+    this.setBeforeParam()
+    this.getPosts().then(() => this.setTotalPages())
   }
 }
 </script>

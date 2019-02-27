@@ -35,14 +35,16 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      request: {
+        type: 'posts',
+        slug: this.slug,
+        showLoading: true }
+    }
   },
   computed: {
     post() {
       return this.$store.getters.singleBySlug(this.request)
-    },
-    request() {
-      return { type: 'posts', slug: this.slug, showLoading: true }
     }
   },
   methods: {

@@ -40,7 +40,19 @@ export default {
   },
   data () {
     return {
-      per_page: this.$store.state.site.posts_per_page,
+      authorRequest: {
+        type: 'users',
+        slug: this.slug
+      },
+      postsRequest: {
+        type: 'posts',
+        params: {
+          per_page: this.$store.state.site.posts_per_page,
+          page: this.page,
+          author: null
+        },
+        showLoading: true
+      },
       totalPages: 0
     }
   },
@@ -48,17 +60,9 @@ export default {
     author() {
       return this.$store.getters.singleBySlug(this.authorRequest)
     },
-    authorRequest() {
-      return { type: 'users', slug: this.slug }
-    },
     posts() {
-      if (this.postsRequest) {
+      if (this.author) {
         return this.$store.getters.requestedItems(this.postsRequest)
-      }
-    },
-    postsRequest() {
-      if (this.author){
-        return { type: 'posts', params: { per_page: this.per_page, page: this.page, author: this.author.id }, showLoading: true }
       }
     },
     title() {
@@ -68,11 +72,15 @@ export default {
   methods: {
     getAuthor() {
       return this.$store.dispatch('getSingleBySlug', this.authorRequest).then(() => {
+        this.setAuthorParam()
         this.$store.dispatch('updateDocTitle', { parts: [ this.author.name, this.$store.state.site.name ] })
       })
     },
     getPosts() {
       return this.$store.dispatch('getItems', this.postsRequest)
+    },
+    setAuthorParam() {
+      this.postsRequest.params.author = this.author.id
     },
     setTotalPages() {
       this.totalPages = this.$store.getters.totalPages(this.postsRequest)

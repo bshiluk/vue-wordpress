@@ -33,14 +33,18 @@ export default {
   },
   data() {
     return {
-      per_page: this.$store.state.site.posts_per_page,
+      request: {
+        type: 'posts',
+        params: { 
+          per_page: this.$store.state.site.posts_per_page,
+          page: this.page
+        }, 
+        showLoading: true 
+      },
       totalPages: 0
     }
   },
   computed: {
-    request() {
-      return { type: 'posts', params: { per_page: this.per_page, page: this.page }, showLoading: true }
-    },
     posts() {
       return this.$store.getters.requestedItems(this.request)
     }

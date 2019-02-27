@@ -44,7 +44,20 @@ export default {
   },
   data () {
     return {
-      per_page: this.$store.state.site.posts_per_page,
+      postsRequest: {
+        type: 'posts',
+        params: {
+          per_page: this.$store.state.site.posts_per_page,
+          page: this.page,
+          categories: null,
+          tags: null
+        },
+        showLoading: true
+      },
+      taxonomyRequest: {
+        type: this.type,
+        slug: this.slug
+      },
       totalPages: 0
     }
   },
@@ -52,19 +65,9 @@ export default {
     taxonomy() {
       return this.$store.getters.singleBySlug(this.taxonomyRequest)
     },
-    taxonomyRequest() {
-      return { type: this.type, slug: this.slug }
-    },
     posts() {
-      if (this.postsRequest) {
-        return this.$store.getters.requestedItems(this.postsRequest)
-      }
-    },
-    postsRequest() {
       if (this.taxonomy) {
-        let request = { type: 'posts', params: { per_page: this.per_page, page: this.page }, showLoading: true }
-        request.params[this.type] = this.taxonomy.id
-        return request
+        return this.$store.getters.requestedItems(this.postsRequest)
       }
     },
     title() {
@@ -74,11 +77,15 @@ export default {
   methods: {
     getTaxonomy() {
       return this.$store.dispatch('getSingleBySlug', this.taxonomyRequest).then(() => {
+        this.setPostsRequestParams()
         this.$store.dispatch('updateDocTitle', { parts: [ this.taxonomy.name, this.$store.state.site.name ] })
       })
     },
     getPosts() {
       return this.$store.dispatch('getItems', this.postsRequest)
+    },
+    setPostsRequestParams() {
+      this.postsRequest.params[this.type] = this.taxonomy.id
     },
     setTotalPages() {
       this.totalPages = this.$store.getters.totalPages(this.postsRequest)
