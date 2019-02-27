@@ -148,8 +148,7 @@ function vue_wordpress_site()
         'logo' => get_theme_mod( 'custom_logo' ),
         'name' => get_bloginfo( 'name' ),
         'posts_per_page' => get_option( 'posts_per_page' ),
-        'url' => get_bloginfo( 'url' ),
-        'date' => get_day_link( '', '', '')
+        'url' => get_bloginfo( 'url' )
     );
 
 }
