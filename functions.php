@@ -152,3 +152,19 @@ function vue_wordpress_site()
     );
 
 }
+
+/**
+ * In template functions
+ */
+
+function vue_wordpress_min_read( $content )
+{
+    $length = count( explode( ' ', $content ) ) + 1;
+    $time = $length / 200;
+
+    if ( is_float( $time ) ) {
+        $time = ceil( $time );
+    }
+   
+    return $time . 'min read';
+}
