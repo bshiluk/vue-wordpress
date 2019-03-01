@@ -14,7 +14,7 @@
   - [Usage](#usage)
     - [Development](#development)
     - [Deployment](#deployment)
-  - [How it Works](#how-it-works)
+  - [General Overview](#general-overview)
   - [Routing](#routing)
     - [Permalinks to Routes](#permalinks-to-routes)
     - [Exceptions](#exceptions)
@@ -22,10 +22,13 @@
     - [Category and Tag Base](#category-and-tag-base)
     - [Homepage and Posts Per Page](#homepage-and-posts-per-page)
     - [Internal Link Delegation](#internal-link-delegation)
-  - [State Management](#state-management)
-    - [Store Initialization and Structure](#store-initialization-and-structure)
+  - [State Management and API Requests](#state-management-and-api-requests)
+    - [Vuex Initialization and Schema](#store-initialization-and-schema)
+      - [Schema](#schema)
+      - [Initialization](#initialization)
     - [Requesting Data](#requesting-data)
-    - [Request Caching](#request-caching)
+      - [Making WP REST API Requests](#making-wp-rest-api-requests)
+      - [Request Caching](#request-caching)
     - [Actions Api Reference](#actions-api-reference)
       - [Request an item of type by its slug](#request-an-item-of-type-by-its-slug)
       - [Request an item of type by its id](#request-an-item-of-type-by-its-id)
@@ -34,7 +37,21 @@
       - [Get an item of type by slug](#get-an-item-of-type-by-slug)
       - [Get an item of type by id](#get-an-item-of-type-by-id)
       - [Get a list of items](#get-a-list-of-items)
-  - [SEO](#seo)
+  - [SEO](#seo-and-server-rendered-content)
+    - [How It Works](#seo-and-server-rendered-content-how-it-works)
+    - [The Three Basic Approaches](#the-three-basic-approaches)
+      - [Pseudo Headless](#pseudo-headless)
+        - [Example index.php](#example-indexphp)
+        - [Pseudo Headless SEO](#pseudo-headless-seo)
+      - [Preload Data](#preload-data)
+        - [Example single.php](#example-singlephp)
+        - [Example category.php](#example-categoryphp)
+        - [Preload Data SEO](#preload-data-seo)
+      - [Progressive Enhancement](#progressive-enhancement)
+        - [Example home.php](#example-homephp)
+        - [Progressive Enhancement SEO](#progressive-enhancement-seo)
+  - [Upcoming Features](#upcoming-features)
+  - [Final Thoughts](#final-thoughts)
     
 ## Features
 * Front and Back-End run on same host
@@ -88,9 +105,8 @@ wp_enqueue_script( 'vue_wordpress.js', 'http://localhost:8080/vue-wordpress.js',
 wp_enqueue_script('vue_wordpress.js', get_template_directory_uri() . '/dist/vue-wordpress.js', array(), null, true);
 ````
 
-## How it Works
+## General Overview
 
-General Overview:
 1. Wordpress creates initial content and localizes a `__VUE_WORDPRESS__` variable with initial state, routing info, and any client side data not accessible through the WP REST API.
 2. Client renders initial content, and once js is parsed, `__VUE_WORDPRESS__` is used to create the Vuex store, Vue Router routes, and the app is mounted.
 3. Vue takes over all future in-site navigation, using the WP_REST_API to request data, essentially transforming the site into a SPA.
@@ -137,8 +153,8 @@ Using 'Post name'
 
 - Using `/%category%/%postname%/` or `/%tag%/%postname%/` will cause problems with nested pages
 - Problems with the permalink structure are generally because the router can't differentiate between a post and a page. While this may be solved with Navigation Guards and in component logic to check data and redirect when necessary, the introduced complexity is out of scope for this starter theme.
-- Routes for custom post types will be needed to be added as necessary.
-- Routing is by default dynamic, however when a structure is defined it is probably in the best interest of the developer to refactor and simplify the routing to be static.
+- Routes for custom post types will be needed to be added as needed.
+- Routing is by default dynamic, however when a structure is defined it could be in the best interest of the developer to refactor out some of the dynamic qualities.
 
 ### Category and Tag Base
 
@@ -165,14 +181,15 @@ You can do:
 <a :href="tag.link">{{ tag.name }}</a>
 ````
 
-## State Management
+## State Management and API Requests
 
 A Vuex store is used to manage the state for this theme, so it is recommended at the very least to know [what it is](https://vuex.vuejs.org/) and become familiar with some of the [core concepts](https://vuex.vuejs.org/guide/state.html). That said, you'd be surprised at the performant and user-friendly themes you can build without even modifying the Vuex files in `/src/store/`.
 
-### Store Initialization and Structure
+### Vuex Initialization and Schema
 
-Normally, you would find the structure of a Vuex store in the file that initializes it. Even though it is initialized in `/src/store/index.js`, the schema is defined in `functions.php`. This allows you to use the use the [REST API Data Localizer](https://github.com/bucky355/rest-api-data-localizer) to prepopulate the store with both WP REST API data in addition to any other data you may need for your state not available through the WP REST API.
+Normally, you would find the schema ( structure ) of a Vuex store in the file that initializes it (or an imported state.js file ). Even though it is initialized in `/src/store/index.js`, the schema is defined in `functions.php`. This allows you to use the use the [REST API Data Localizer](https://github.com/bucky355/rest-api-data-localizer) to prepopulate the store with both WP REST API data in addition to any other data you may need for your state not available through the WP REST API.
 
+#### Schema
 ````php
 // functions.php 
 
@@ -191,7 +208,8 @@ new RADL( '__VUE_WORDPRESS__', 'vue_wordpress.js', array(
 ) );
 ````
 
-As you can see below, the `__VUE_WORDPRESS__.state` key is used for the store.
+#### Initialization
+As you can see below, the `__VUE_WORDPRESS__.state` key is used to initialize the Vuex store.
 
 ````js
 // src/store/index.js
@@ -205,13 +223,15 @@ export default new Vuex.Store({
   actions
 })
 ````
-*You may want to decouple this localized store from your Vuex store at some point, but I think it decreases the initial complexity.*
+*More advanced implementations may want to decouple this localized store from the Vuex store, but I think it decreases the initial complexity.*
 
 ### Requesting Data
 
+#### Making WP REST API Requests
+
 You will not see any WP REST API requests within the components of the theme. Instead, Vuex actions are dispatched signalling a need for asynchronous data. If the data is not available in the store, only then is a request made. When the request is returned the response data is added to the store.
 
-### Request Caching
+#### Request Caching
 
 Every time there is a request for a list of items, a request object is generated once the response is received.
 ````js
@@ -321,6 +341,184 @@ this.$store.getters.requestedItems({ type, params })
 ````
 
 
-## SEO
+## SEO and Server Rendered Content
 
-TODO...
+### How It Works
+
+What enables SEO and server rendered content with this theme is the routing. The Vue app routing mirrors that of how Wordpress resolves query strings to templates using the [Template Hierarchy](https://developer.wordpress.org/themes/basics/template-hierarchy/). So, on the server side, you know exactly what data the app will need when it renders at a specific location. The problem then becomes how to render the app with that data. Technically, the WP loop and template functions could produce output for crawlers, but it would be unusable for the app. Instead, the REST API Data Localizer is used to simulate the relevant GET requests internally corresponding to the WP template loaded, and localize that response data for the app on render.
+
+
+### The Three Basic Approaches
+
+Each approach provides either explicit setup or specific examples and includes the php knowledge required to implement.
+
+#### Pseudo Headless
+
+*Minimal to no php knowledge required*
+
+With this implementation, all you need is an index.php file that renders the element the app will mount on. Add your `<html>`, `<head>`, `<meta>`, and `<body>` tags, and call `wp_head()` and `wp_footer()`. These calls ensure Wordpress still manages `<title>`, adds `<meta>`, and enqueues scripts and stylesheets as configured.
+
+##### Example index.php
+````html
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+    <head>
+        <meta charset="<?php bloginfo( 'charset' ); ?>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?php wp_head(); ?>
+    </head>
+    <body>
+        <div id="vue-wordpress-app">
+            <!-- Enhancing this approach, you could show
+            a loading indicator here while your app js
+            is parsed and data is fetched -->
+        </div>
+        <?php wp_footer(); ?>
+    </body>
+</html>
+````
+
+*Optionally, you can remove `wp_head()`, or `wp_footer()`, or even both and hard code in your `<script>`, `<style>` and `<link>` tags. In this case, the REST API Data Localizer would be incompatible and you would need to refactor the initialization of Vuex and Vue Router so they weren't dependent on its localized data.*
+
+##### Pseudo Headless SEO
+
+Crawlers will no longer be able to properly index your site because they would still need asynchronous data on the initialization of your Vue app ( even if they could parse js ). However, if SEO is not a concern of yours, no harm no foul. On the other hand, assuming you call `wp_head()` and `wp_footer()` with the routing properly synced, the social sharing links should still work properly, as they use the meta in the `<head>` of your site 
+
+#### Preload Data
+
+*Minimal php knowledge required*
+
+This approach allows you to eliminate all initial REST API requests, effectively decreasing initial time to interactive, and allowing crawlers that can render js to index your content. Wordpress resolves the query and uses the appropriate template as per the [Template Hierarchy](https://developer.wordpress.org/themes/basics/template-hierarchy/). Within these templates, you can just make the appropriate requests based on your apps needs. Since the Vue Router route components correspond to the WP templates this becomes straightforward.
+
+**The examples below will utilize the [REST API Data Localizer](https://github.com/bucky355/rest-api-data-localizer) and assume a schema as shown [here](#schema). If you are confused on its usage follow the link and refer to the docs.**
+
+
+##### Example single.php
+*Assuming you need the post and its featured media, categories, and tags.*
+````php
+<?php
+get_header();
+
+$p = RADL::get( 'state.posts', get_the_ID() );
+RADL::get( 'state.media', $p['featured_media'] );
+RADL::get( 'state.categories', $p['categories'] );
+RADL::get( 'state.tags', $p['tags'] );
+
+get_footer();
+````
+
+##### Example category.php
+*Assuming you need the category, and N posts from X page that have that category
+( N refers to the posts per page set in Settings > Reading ).*
+````php
+<?php
+get_header();
+
+$category_id = get_query_var('cat');
+$per_page = RADL::get( 'state.site' )['posts_per_page'];
+$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+
+
+RADL::get( 'state.categories', $category_id );
+RADL::get( 'state.posts', array(
+    'page' => $paged,
+    'per_page' => $per_page,
+    'categories' => $category_id
+) );
+
+get_footer();
+
+````
+*The preceding examples use `get_header()`  and   `wp_footer()`, which are Wordpress functions that include the `header.php` and `footer.php` files respectively. If these functions were used in the [Pseudo Headless Example](#example-indexphp) there would be three files that looked like this:*
+
+**index.php**
+````html
+<?php
+get_header(); ?>
+<!-- Enhancing this approach, you could show
+a loading indicator here while your app js
+is parsed and data is fetched -->
+<?php
+get_footer();
+````
+**header.php**
+````html
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+    <head>
+        <meta charset="<?php bloginfo( 'charset' ); ?>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?php wp_head(); ?>
+    </head>
+    <body>
+        <div id="vue-wordpress-app">
+````
+**footer.php**
+````html
+</div><!-- #vue-wordpress-app -->
+<?php wp_footer(); ?>
+</body>
+</html>
+````
+##### Preload Data SEO
+
+When you preload required data, the Vue instance has everything it needs on render. This allows crawlers that can render js to index your site appropriately. However, it should be mentioned that just because these crawlers have the capability of rendering the js before indexing it doesn't mean they will. Here's [an article](https://www.elephate.com/blog/javascript-seo-experiment/) about it for more information.
+
+Of course the added UX benefit of this approach is that the end users will be able to interact with the content pretty much immediately ( after the js is parse and rendered, and not have to wait for the app to fetch data.
+
+#### Progressive Enhancement
+
+*Intermediate php knowledge required*
+
+The third and final approach involves recreating the php templates with the REST API Data Localizer corresponding to your different route components. The beauty of the approach is that you don't have to ( and probably shouldn't ) fully recreate how the Vue instance renders the app in your templates. You can opt for a progressive enhancement approach, creating skeleton templates that Vue enhances on render. By default, the theme fully recreates these templates, but it is a starter theme, so this makes sense. You can see this by viewing the [theme demo](http://vue-wordpress.com), disabling javascript in the developer tools, and reloading the site.
+
+##### Example home.php
+````html
+<?php
+get_header();
+$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+$per_page = RADL::get( 'state.site' )['posts_per_page'];
+$posts = RADL::get( 'state.posts', array( 'page' => 1, 'per_page' => $per_page ) ); ?>
+
+<main>
+    <section>
+
+        <?php
+        foreach ( $posts as $p ) {
+            set_query_var( 'vw_post', $p );
+            get_template_part( 'template-parts/post-item' );
+        } ?>
+
+    </section>
+
+    <?php
+    get_template_part( 'template-parts/pagination' ); ?>
+
+</main>
+
+<?php
+get_footer();
+````
+- `get_template_part()` is a wp function that includes the php template using the argument passed
+- `set_query_var()` is another wp function that sets variables you can access through `get_query_var()` in your template-part ( *you can't pass arguments to `get_template_part()`* )
+- Notice that the query vars set correlate to what's passed to the props of the vue component
+- If you want to see the post-item and pagination files refer to the `/template-parts/post-item.php` and `/template-parts/pagination.php`
+
+##### Progressive Enhancement SEO
+
+Crawlers can index your content and you don't have to rely on their ability to render js. Your users get content instantly without waiting for the Vue instance to render. The perceived load time is improved further as users get content instantly and enhanced with functionality and additional content once the Vue instance renders.
+
+## Upcoming Features
+
+I do plan to extend the functionality of the theme depending on whether developers find it useful. Some things I plan to add support for ( in no particular order ) include:
+- Search
+- Comments
+- Page Templates
+- Post Formats
+- Widgets
+- ACF
+- Dynamic routing for custom post types
+
+## Final Thoughts
+
+I hope you found this documentation useful. There's too many quality repos out there limited in usage by their poor documentation. If there is any other topics you would like me to cover feel free to post add an issue.
