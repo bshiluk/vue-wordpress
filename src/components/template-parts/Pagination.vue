@@ -1,19 +1,21 @@
 <template>
   <section class="pagination">
-    <button
+    <a
       v-show="current !== 1"
       class="pagination__previous"
+      href="#"
       rel="previous"
       v-html="'&lsaquo; Previous'"
       @click.prevent="gotoPage(current - 1)"
-    ></button>
-    <button
+    ></a>
+    <a
       v-show="current !== total"
       class="pagination__next"
+      href="#"
       rel="next"
       v-html="'Next &rsaquo;'"
       @click.prevent="gotoPage(current + 1)"
-    ></button>
+    ></a>
   </section>
 </template>
 
@@ -59,11 +61,15 @@ export default {
     border-bottom: 1px solid #e8e8e8;
   }
 
-  .pagination>button:first-of-type {
+  .pagination>a {
+    font-size: 1.8rem;
+    display: inline-block;
+  }
+  .pagination>a:first-of-type {
     float: left;
   }
   
-  .pagination>button:last-of-type {
+  .pagination>a:last-of-type {
     float: right;
   }
 </style>
