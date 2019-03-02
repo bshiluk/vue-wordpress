@@ -1,9 +1,7 @@
 <template>
   <main>
-    <h1>404 - Page Not Found</h1>
+    <h1>{{ title }}</h1>
     <p>{{ message }}</p>
-    <button @click="$router.go(-1)">Go Back</button>
-    <button @click="$router.replace('/')">Go Home</button>
   </main>
 </template>
 
@@ -11,6 +9,7 @@
 export default {
   data() {
     return {
+      title: '404 - Page Not Found',
       message: 'Apparently nothing exists at this location.'
     }
   },
