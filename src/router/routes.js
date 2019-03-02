@@ -1,9 +1,10 @@
 // Route components
 import Home from '@/components/Home'
 import NotFound from '@/components/404'
-import DateArchive from '@/components/DateArchive'
 import AuthorArchive from '@/components/AuthorArchive'
-import TaxonomyArchive from '@/components/TaxonomyArchive'
+import DateArchive from '@/components/DateArchive'
+import CategoryArchive from '@/components/CategoryArchive'
+import TagArchive from '@/components/TagArchive'
 import Single from '@/components/Single'
 import Page from '@/components/Page'
 // Route paths as formatted in WP permalink settings
@@ -45,28 +46,28 @@ export default [
     name: '404'
   },
   {
-    path: paths.dateArchive,
-    component: DateArchive,
-    name: 'DateArchive',
-    props: route => (Object.assign(route.params, { page: pageFromPath(route.path) }))
-  },
-  {
     path: paths.authorArchive,
     component: AuthorArchive,
     name: 'AuthorArchive',
     props: route => (Object.assign(route.params, { page: pageFromPath(route.path) }))
   },
   {
+    path: paths.dateArchive,
+    component: DateArchive,
+    name: 'DateArchive',
+    props: route => (Object.assign(route.params, { page: pageFromPath(route.path) }))
+  },
+  {
     path: paths.categoryArchive,
-    component: TaxonomyArchive,
+    component: CategoryArchive,
     name: 'CategoryArchive',
-    props: route =>  (Object.assign(route.params, { type: 'categories', slug: categorySlugFromParams(route.params), page: pageFromPath(route.path) } ))
+    props: route =>  (Object.assign(route.params, { slug: categorySlugFromParams(route.params), page: pageFromPath(route.path) } ))
   },
   {
     path: paths.tagArchive,
-    component: TaxonomyArchive,
+    component: TagArchive,
     name: 'TagArchive',
-    props: route => (Object.assign(route.params, { type: 'tags' }, { page: pageFromPath(route.path) }))
+    props: route => (Object.assign(route.params, { page: pageFromPath(route.path) }))
   },
   {
     path: paths.single,
