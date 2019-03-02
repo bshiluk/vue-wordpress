@@ -1,11 +1,11 @@
-![Vue.wordpress icon](http://vue-wordpress.com/wp-content/uploads/2019/02/iconcomb3-1-2-e1551047832430.png)
+![Vue.wordpress icon]([](http://vue-wordpress-demo.bshiluk.com/wp-content/uploads/2019/03/vue-wordpress-logo-e1551495565479.png))
 # Vue.wordpress
 
 > A Wordpress starter theme built using the WP REST API and Vue.js. Optimized for SEO, performance, and ease of development.
 
 *This theme is intended to be used as a foundation for creating sites that function as a single-page application (SPA) on the front-end, while using Wordpress and the WP REST API to manage content and fetch data.*
 
-**Check out [a demo of the theme](http://vue-wordpress.com)**
+**Check out [a demo of the theme](http://vue-wordpress-demo.bshiluk.com)**
 
 # Table of Contents
 
@@ -382,7 +382,7 @@ With this implementation, all you need is an index.php file that renders the ele
 
 ##### Pseudo Headless SEO
 
-Crawlers will no longer be able to properly index your site because they would still need asynchronous data on the initialization of your Vue app ( even if they could parse js ). However, if SEO is not a concern of yours, no harm no foul. On the other hand, assuming you call `wp_head()` and `wp_footer()` with the routing properly synced, the social sharing links should still work properly, as they use the meta in the `<head>` of your site 
+Crawlers will no longer be able to properly index your site because even if they could parse js, they would still need asynchronous data on initialization. However, if SEO is not a concern of yours, no harm no foul. On the other hand, assuming you call `wp_head()` and the routing is properly synced, social sharing links should still work properly, as `wp_head()` manages meta in the `<head>` of your site.
 
 #### Preload Data
 
@@ -464,13 +464,13 @@ get_footer();
 
 When you preload required data, the Vue instance has everything it needs on render. This allows crawlers that can render js to index your site appropriately. However, it should be mentioned that just because these crawlers have the capability of rendering the js before indexing it doesn't mean they will. Here's [an article](https://www.elephate.com/blog/javascript-seo-experiment/) about it for more information.
 
-Of course the added UX benefit of this approach is that the end users will be able to interact with the content pretty much immediately ( after the js is parse and rendered, and not have to wait for the app to fetch data.
+Of course the added UX benefit of this approach is that the end users will be able to interact with the content pretty much immediately ( after the js is parse and rendered, and not have to wait for the app to fetch data ).
 
 #### Progressive Enhancement
 
 *Intermediate php knowledge required*
 
-The third and final approach involves recreating the php templates with the REST API Data Localizer corresponding to your different route components. The beauty of the approach is that you don't have to ( and probably shouldn't ) fully recreate how the Vue instance renders the app in your templates. You can opt for a progressive enhancement approach, creating skeleton templates that Vue enhances on render. By default, the theme fully recreates these templates, but it is a starter theme, so this makes sense. You can see this by viewing the [theme demo](http://vue-wordpress.com), disabling javascript in the developer tools, and reloading the site.
+The third and final approach involves recreating the php templates with the REST API Data Localizer corresponding to your different route components. The beauty of the approach is that you don't have to ( and probably shouldn't ) fully recreate how the Vue instance renders the app in your templates. You can opt for a progressive enhancement approach, creating skeleton templates that Vue enhances on render. By default, the theme fully recreates these templates, but it is a starter theme, so this makes sense. You can see this by viewing the [theme demo](http://vue-wordpress-demo.bshiluk.com), disabling javascript in the developer tools, and reloading the site.
 
 ##### Example home.php
 ````html
@@ -521,4 +521,4 @@ I do plan to extend the functionality of the theme depending on whether develope
 
 ## Final Thoughts
 
-I hope you found this documentation useful. There's too many quality repos out there limited in usage by their poor documentation. If there is any other topics you would like me to cover feel free to post add an issue.
+I hope you found this documentation useful. If there are any other topics you would like me to cover, or need clarification on feel free to add an issue.
